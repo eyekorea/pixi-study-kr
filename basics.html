@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>pixijs start</title>
+	<script type="text/javascript" src="vendor/pixi.min.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+		}
+	</style>
+</head>
+<body>
+<script type="text/javascript">
+
+	// renderer 를 생성한다.
+	var renderer = PIXI.autoDetectRenderer( 800, 600, {
+		backgroundColor: '0xffffff'
+	} );
+
+	// html 문서에 canvas 를 추가 한다.
+	document.body.appendChild( renderer.view );
+
+	// `stage` 라는 컨테이너 객체를 생성.
+	var stage = new PIXI.Container();
+
+	// `texture` 를 만들고 이미지 경로를 넣는다.
+	var texture = PIXI.Texture.fromImage('images/basics/cttd_logo.png');
+
+	// 새로운 `sprite` 에서 texture 를 생성.
+	var bunny = new PIXI.Sprite( texture );
+
+	bunny.anchor.x = 0.5;
+	bunny.anchor.y = 0.5;
+
+	bunny.position.x = 200;
+	bunny.position.y = 150;
+
+	stage.addChild( bunny );
+
+	animate();
+
+	function animate(){
+		requestAnimationFrame( animate );
+
+		bunny.rotation += 0.05;
+
+		renderer.render( stage );
+	}
+
+
+</script>
+</body>
+</html>

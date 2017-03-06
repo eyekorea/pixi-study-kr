@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>pixijs start</title>
+	<script type="text/javascript" src="vendor/pixi.min.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+		}
+	</style>
+</head>
+<body>
+<script type="text/javascript">
+
+	// renderer 를 생성한다.
+	var renderer = PIXI.autoDetectRenderer( window.innerWidth, window.innerHeight );
+
+	// html 문서에 canvas 를 추가 한다.
+	document.body.appendChild( renderer.view );
+
+	// `stage` 라는 컨테이너 객체를 생성.
+	var stage = new PIXI.Container();
+
+	//  `renderer` 로  `stage` 를 `render` 하도록 함.
+	renderer.render( stage );
+
+	renderer.view.style.position = 'absolute';
+	renderer.view.style.display = 'block';
+	renderer.autoResize = true;
+
+	window.addEventListener( 'resize', function(){
+		renderer.resize( window.innerWidth ,window.innerHeight );
+	} );
+
+
+</script>
+</body>
+</html>
