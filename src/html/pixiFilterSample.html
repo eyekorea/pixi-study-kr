@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>pixijs start</title>
+	<link rel="stylesheet" href="/assets/vendor/jquery-ui.min.css">
+	<script type="text/javascript" src="/assets/vendor/jquery-3.2.0.min.js"></script>
+	<script type="text/javascript" src="/assets/vendor/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/assets/vendor/pixi.min.js"></script>
+	<script type="text/javascript" src="/assets/js/stage.js"></script>
+	<script type="text/javascript" src="/assets/js/util.js"></script>
+
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		body{
+			
+		}
+		.controller{
+			width: 220px;
+			
+			border: 1px solid red;
+			padding: 10px 20px 20px;
+			position: absolute;
+			right: 0;
+			z-index: 100;	
+			background: #fff;
+		}
+		.slider{
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+<canvas id="sampleCanvas"></canvas>
+<div class="controller" id="controller">
+	<div class="slider">
+		<label for="amount">noise:</label>
+		<input type="text" id="noiseVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="noise"></div>
+	</div>
+	<div class="slider">
+		<label for="amount">blurX:</label>
+		<input type="text" id="blurXVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="blurX"></div>
+	</div>
+	<div class="slider">
+		<label for="amount">blurY:</label>
+		<input type="text" id="blurYVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="blurY"></div>
+	</div>
+	<div class="slider">
+		<label for="amount">displacementFilterX:</label>
+		<input type="text" id="displacementFilterXVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="displacementFilterX"></div>
+	</div>
+	<div class="slider">
+		<label for="amount">displacementFilterY:</label>
+		<input type="text" id="displacementFilterYVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="displacementFilterY"></div>
+	</div>
+
+	<div class="slider">
+		<label for="amount">alpha:</label>
+		<input type="text" id="alphaVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="alpha"></div>
+	</div>
+
+	<div class="slider">
+		<label for="amount">colorMatrix brightness:</label>
+		<input type="text" id="brightnessVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="brightness"></div>
+	</div>
+
+	<div class="slider">
+		<label for="amount">colorMatrix contrast:</label>
+		<input type="text" id="contrastVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="contrast"></div>
+	</div>
+
+	<!-- <div class="slider">
+		<label for="amount">colorMatrix grayscale:</label>
+		<input type="text" id="grayscaleVal" readonly style="border:0; color:#f6931f; font-weight:bold;">
+		<div id="grayscale"></div>
+	</div> -->
+
+</div>
+<script type="text/javascript">
+	
+
+	var canvasElement = document.getElementById('sampleCanvas');
+
+	var windowStatus = {
+		width : $(window).width(),
+		height : $(window).height()
+	};
+	var ctr = {
+		blurX : 0,
+		blurY : 0,
+		noise : 0, // 0~1
+		alpha : 1, // 0~1
+		displacementFilter : {
+			x : 0,
+			y : 0
+		},
+		displacementFilterNoise : {
+			x : 0,
+			y : 0
+		},
+		colorMatrix : {
+			brightness : 1, // 0~1
+			brightnessMtp : true,
+			contrast : 0, // 0~1
+			contrastMtp : true,
+			grayscale : 1,
+			grayscaleMtp : true
+		}
+	};
+	// renderer 를 생성한다.
+	var renderer = PIXI.autoDetectRenderer( window.innerWidth, window.innerHeight, {
+		transparent: true,
+		antialias : true,
+		forceFXAA : true,
+		view : canvasElement
+	});
+	// render seting
+	renderer.view.style.position = 'absolute';
+	renderer.view.style.width = window.innerWidth + "px";
+	renderer.view.style.height = window.innerHeight + "px";
+	renderer.view.style.display = 'block';
+	renderer.autoResize = true;
+
+
+	var stage = new PIXI.Container(); // `stage` 라는 컨테이너 객체를 생성.
+	var mainTexture = PIXI.Texture.fromImage('/assets/images/img1.jpg'); // 주 사용 이미지
+	var displacementTexture = PIXI.Sprite.fromImage('/assets/images/displacementmap.png'); // DisplacementFilter 용 이미지.
+	displacementTexture.width = windowStatus.width;
+	displacementTexture.height = windowStatus.height;
+
+	var noiseTexture = PIXI.Sprite.fromImage('/assets/images/pattern_360.png'); // noiseMap 용 이미지.
+	noiseTexture.width = windowStatus.width;
+	noiseTexture.height = windowStatus.height;
+
+	var mainImage = new PIXI.Sprite( mainTexture ); // 주사용 이미지를 spirte 화.
+	mainImage.anchor.x = 0;
+	mainImage.anchor.y = 0;
+	mainImage.position.x = 0;
+	mainImage.position.y = 0;
+	
+	stage.addChild( mainImage ); // 스테이지에 mainImage 추가.
+
+	// console.log( mainTexture )
+
+	// blur filter
+	var blurFilter = new PIXI.filters.BlurFilter(); 
+	blurFilter.blur = 0;
+
+	// 안티얼리어싱 미지원 브라우저에 안티얼리어싱을 먹인다는데 모르겠음.
+	var fxaa = new PIXI.filters.FXAAFilter();
+
+	// noise Filter
+	// 별로임-_-;
+	var noise = new PIXI.filters. NoiseFilter(  );
+	noise.noise = 0.00;
+	// noise.autoFit = true;
+
+	var displacementFilter = new PIXI.filters.DisplacementFilter(displacementTexture);
+	displacementFilter.scale.x = 0;
+	displacementFilter.scale.y = 0;
+	stage.addChild( displacementTexture );
+
+	var displacementFilterNoise = new PIXI.filters.DisplacementFilter(noiseTexture);
+	displacementFilterNoise.scale.x = 0;
+	displacementFilterNoise.scale.y = 0;
+	stage.addChild( noiseTexture );
+
+	var colorMatrix = new PIXI.filters.ColorMatrixFilter();
+	console.log( colorMatrix)
+	mainImage.filters = [
+		blurFilter, 
+		fxaa, 
+		noise,
+		displacementFilter,
+		displacementFilterNoise,
+		colorMatrix
+	];
+
+	// html 문서에 canvas 추가.
+	document.body.appendChild( renderer.view );
+
+	function draw(){
+		renderer.render( stage );
+		colorMatrix.reset();
+		
+		// colorMatrix.brightness =
+		stage.alpha = ctr.alpha;
+		colorMatrix.brightness ( ctr.colorMatrix.brightness, ctr.colorMatrix.brightnessMtp );
+		colorMatrix.contrast ( ctr.colorMatrix.contrast, ctr.colorMatrix.contrastMtp );
+		// colorMatrix.grayscale( ctr.colorMatrix.grayscale, ctr.colorMatrix.grayscaleMtp );
+		blurFilter.blurX = ctr.blurX;
+		blurFilter.blurY = ctr.blurY;
+		displacementFilter.scale.x = ctr.displacementFilter.x;
+		displacementFilter.scale.y = ctr.displacementFilter.y;
+		displacementFilterNoise.scale.x = ctr.displacementFilterNoise.x;
+		displacementFilterNoise.scale.y = ctr.displacementFilterNoise.y;
+		noise.noise = ctr.noise;
+		
+		
+	};
+
+
+
+
+	// pixi 를 그릴 스테이즈 및 관련 객체를 생성.
+	function pixiObj( canvasEle ){
+		this.element = canvasEle;
+	    this.isStart = false;
+	    this.frame = 0;
+	    this.objs = [];
+	};
+	pixiObj.prototype.enterFrame = function( movieFnc ){
+		var movie = ( typeof movieFnc === 'function' ) ? movieFnc : null;
+		var instance = this;
+		if( movie !== null ) {
+			this.scene = {
+				draw : movie,
+				status : 'play',
+				movieClip : instance
+			};
+			_stage.addScene( this.scene );
+		}
+		if( !_stage.isPlay ) {
+			_stage.play();
+		}
+	};
+	pixiObj.prototype.play = function( context ){
+		this.scene.status = 'play';
+	};
+	pixiObj.prototype.pause = function( context ){
+		this.scene.status = 'pause';
+	};
+	pixiObj.prototype.stop = function( context ){
+		this.scene.status = 'stop';
+	};
+
+	var PixiObject = new pixiObj(canvasElement);
+	PixiObject.enterFrame( draw );
+	
+
+	// 샘플 테스트를 위한 컨트롤러를 생성.
+	$( "#controller" ).draggable();
+	$( "#blurX" ).slider({
+		range: "max",
+		min: 0,
+		max: 100,
+		value: 0,
+		slide: function( event, ui ) {
+			ctr.blurX = ui.value;
+			$( "#blurXVal" ).val( ui.value );
+		}
+	});
+	$( "#blurXVal" ).val( $( "#blurX" ).slider( "value" ) );
+
+	$( "#blurY" ).slider({
+		range: "max",
+		min: 0,
+		max: 100,
+		value: 0,
+		slide: function( event, ui ) {
+			ctr.blurY = ui.value;
+			$( "#blurYVal" ).val( ui.value );
+		}
+	});
+	$( "#blurYVal" ).val( $( "#blurY" ).slider( "value" ) );
+
+	$( "#displacementFilterY" ).slider({
+		range: "max",
+		min: 0,
+		max: 1000,
+		value: 0,
+		slide: function( event, ui ) {
+			ctr.displacementFilter.y = ui.value;
+			$( "#displacementFilterYVal" ).val( ui.value );
+		}
+	});
+	$( "#displacementFilterYVal" ).val( $( "#displacementFilterY" ).slider( "value" ) );
+
+	$( "#displacementFilterX" ).slider({
+		range: "max",
+		min: 0,
+		max: 1000,
+		value: 0,
+		slide: function( event, ui ) {
+			ctr.displacementFilter.x = ui.value;
+			$( "#displacementFilterXVal" ).val( ui.value );
+		}
+	});
+	$( "#displacementFilterXVal" ).val( $( "#displacementFilterX" ).slider( "value" ) );
+
+	$( "#alpha" ).slider({
+		range: "max",
+		min: 0,
+		max: 100,
+		value: 100,
+		slide: function( event, ui ) {
+			ctr.alpha = ui.value/100;
+			$( "#alphaVal" ).val( ui.value/100 );
+		}
+	});
+	$( "#alphaVal" ).val( $( "#alpha" ).slider( "value" ) );
+
+	
+	$( "#displacementFilterNoiseXVal" ).val( $( "#displacementFilterNoiseX" ).slider( "value" ) );
+
+	$( "#noise" ).slider({
+		range: "max",
+		min: 0,
+		max: 100,
+		value: 0,
+		slide: function( event, ui ) {
+			ctr.noise = ui.value/100;
+			$( "#noiseVal" ).val( ui.value/100 );
+		}
+	});
+	$( "#noiseVal" ).val( $( "#noise" ).slider( "value" ) );
+
+	$( "#brightness" ).slider({
+		range: "max",
+		min: 0,
+		max: 100,
+		value: 100,
+		slide: function( event, ui ) {
+			ctr.colorMatrix.brightness = ui.value/100;
+			$( "#brightnessVal" ).val( ui.value/100 );
+		}
+	});
+	$( "#brightnessVal" ).val( $( "#brightness" ).slider( "value" ) );
+	$( "#contrast" ).slider({
+		range: "max",
+		min: 0,
+		max: 100,
+		value: 0,
+		slide: function( event, ui ) {
+			ctr.colorMatrix.contrast = ui.value/100;
+			$( "#contrastVal" ).val( ui.value/100 );
+		}
+	});
+	$( "#contrastVal" ).val( $( "#contrast" ).slider( "value" ) );
+
+	$( "#grayscale" ).slider({
+		range: "max",
+		min: 0,
+		max: 100,
+		value: 0,
+		slide: function( event, ui ) {
+			ctr.colorMatrix.grayscale = ui.value/100;
+			$( "#grayscaleVal" ).val( ui.value/100 );
+		}
+	});
+	$( "#grayscaleVal" ).val( $( "#grayscale" ).slider( "value" ) );
+
+	// window event 생성.
+	$(window).on('resize', function(){
+		renderer.resize( $(window).width() ,$(window).height() );
+	});
+</script>
+</body>
+</html>

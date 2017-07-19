@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>pixijs start</title>
-	<script type="text/javascript" src="vendor/pixi.min.js"></script>
+	<script type="text/javascript" src="/assets/vendor/pixi.min.js"></script>
 	<style type="text/css">
 		*{
 			padding: 0;
@@ -25,7 +25,7 @@
 	var stage = new PIXI.Container();
 
 	// `texture` 를 만들고 이미지 경로를 넣는다.
-	var texture = PIXI.Texture.fromImage('images/basics/cttd_logo.png');
+	var texture = PIXI.Texture.fromImage('/assets/images/basics/cttd_logo.png');
 
 	// 새로운 `sprite` 에서 texture 를 생성.
 	var bunny = new PIXI.Sprite( texture );

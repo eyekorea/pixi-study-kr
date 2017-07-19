@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>pixijs start</title>
+	<script type="text/javascript" src="/assets/vendor/pixi.min.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		body{
+			background: #000;
+		}
+	</style>
+</head>
+<body>
+<script type="text/javascript">
+
+	// renderer 를 생성한다.
+	var renderer = PIXI.autoDetectRenderer( window.innerWidth, window.innerHeight, {
+		transparent: true,
+		antialias : true,
+		forceFXAA : true
+	});
+	renderer.view.style.position = 'absolute';
+	renderer.view.style.width = window.innerWidth + "px";
+	renderer.view.style.height = window.innerHeight + "px";
+	renderer.view.style.display = 'block';
+	renderer.autoResize = true;
+
+	// html 문서에 canvas 를 추가 한다.
+	document.body.appendChild( renderer.view );
+
+	// `stage` 라는 컨테이너 객체를 생성.
+	var stage = new PIXI.Container();
+
+	// 이미지
+	var texture = PIXI.Texture.fromImage('/assets/images/fire-250736_960_720.jpg');
+	
+
+	var bgImg = new PIXI.Sprite( texture );
+	bgImg.anchor.x = 0.5;
+	bgImg.anchor.y = 0.5;
+	bgImg.position.x = 200;
+	bgImg.position.y = 200;
+	bgImg.scale.x = 2;
+	bgImg.scale.y = 2;
+	stage.addChild( bgImg );
+
+	// blur filter 
+	var blurFilter = new PIXI.filters.BlurFilter(); 
+	blurFilter.blur = 0;
+
+	var fxaa = new PIXI.filters.FXAAFilter();
+	var noise = new PIXI.filters. NoiseFilter(  );
+	noise.noise = 0.05;
+	noise.autoFit = true;
+
+	var displacementTexture = PIXI.Sprite.fromImage("/assets/images/displacement-map3_480.png");
+	displacementTexture.scale.x = 2;
+	displacementTexture.scale.y = 2;
+	var displacementFilter = new PIXI.filters.DisplacementFilter(displacementTexture);
+	displacementFilter.scale.x = 0;
+	displacementFilter.scale.y = 0;
+	stage.addChild( displacementTexture );
+
+	var colorMatrix = new PIXI.filters.ColorMatrixFilter();
+
+	bgImg.filters = [
+		blurFilter, 
+		fxaa, 
+		noise,
+		displacementFilter,
+		colorMatrix
+	];
+
+	var blurCount = 0,
+		isBlurCountAdd = true;
+	var noiseCount = 0,
+		isNoiseCountAdd = true;
+	
+
+	// FXAAFilter
+	// VoidFilter
+
+	// NoiseFilter
+	// DisplacementFilter
+	// ColorMatrixFilter
+
+	// femaleTwistFilter
+	var mouse = {
+		ex : 0,
+		ey : 0
+	};
+
+
+	requestAnimationFrame(animate);
+	function animate(){
+		//  `renderer` 로  `stage` 를 `render` 하도록 함.
+		renderer.render( stage );
+		requestAnimationFrame(animate);
+
+
+		 displacementFilter.scale.x = mouse.ex;
+		 displacementFilter.scale.y = mouse.ey;
+
+		blurFilter.blurY = mouse.ey/10;
+		blurFilter.blurX = 0;
+		// noise.noise = 0.1;
+		// noise.seed = Math.floor( Math.random()*100 );
+		// console.log( Math.floor( Math.random()*100 ) )
+		blurCount = (isBlurCountAdd) ? blurCount + .1 : blurCount - .1;
+		
+		colorMatrix.reset();
+		colorMatrix.brightness(1, true);
+
+		if( blurCount >= 10  && isBlurCountAdd){
+			isBlurCountAdd = false;
+		}
+		if( blurCount <= 0  && !isBlurCountAdd ){
+			isBlurCountAdd = true;
+		}
+
+		// if( noiseCount >= .5  && isNoiseCountAdd){
+		// 	isNoiseCountAdd = false;
+		// }
+		// if( noiseCount <= 0  && !isNoiseCountAdd ){
+		// 	isNoiseCountAdd = true;
+		// }
+
+	}
+
+	
+	document.addEventListener('mousemove', function(event){
+		mouse.ex = event.pageX;
+		mouse.ey = event.pageY;
+		// if( mouse.isPress ){
+		// 	mouse.moveAverage = Math.abs( mouse.ex - mouse.sx ) + Math.abs( mouse.ey - mouse.sy );
+		// 	mouse.isDrag = true;
+		// }
+	});
+	
+	
+
+	window.addEventListener( 'resize', function(){
+		renderer.resize( window.innerWidth ,window.innerHeight );
+	} );
+
+
+
+</script>
+</body>
+</html>

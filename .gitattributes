@@ -1,0 +1,4 @@
+# 줄바꿈 문자의 차이로 인한 diff가 발생하지 않도록 처리
+# 참고: https://ko.wikipedia.org/wiki/%EC%83%88%EC%A4%84_%EB%AC%B8%EC%9E%90
+# 참고: http://kwonnam.pe.kr/wiki/git/crlf
+* text=auto

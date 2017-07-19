@@ -1,0 +1,45 @@
+{
+  "name": "project-resurfy",
+  "version": "0.0.1",
+  "description": "project resurfy",
+  "main": "gulpfile.js",
+  "devDependencies": {
+    "browser-sync": "^2.10.1",
+    "del": "^2.2.0",
+    "es6-promise": "^3.0.2",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.0.2",
+    "gulp-csslint": "^0.2.0",
+    "gulp-eslint": "^1.1.1",
+    "gulp-htmlhint": "^0.3.0",
+    "gulp-if": "^2.0.0",
+    "gulp-ignore": "^2.0.1",
+    "gulp-imagemin": "^2.3.0",
+    "gulp-jsbeautifier": "^1.0.1",
+    "gulp-lb-include": "^0.3.1",
+    "gulp-less": "^3.0.3",
+    "gulp-load-plugins": "^1.1.0",
+    "gulp-newer": "^1.1.0",
+    "gulp-nwayo-include": "^0.3.0",
+    "gulp-plumber": "^1.0.1",
+    "run-sequence": "^1.1.5",
+    "gulp.spritesmith-multi" : "^3.1.0"
+  },
+  "scripts": {
+    "start": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cttd/cttd-home"
+  },
+  "contributors": [
+    "정상현 <eyekorea@cttd.co.kr>",
+    "유민정 <yoopd8676@cttd.co.kr>",
+    "곽지수 <jisuk@cttd.co.kr>"
+  ],
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/cttd/project-resurfy/issues"
+  },
+  "homepage": "https://github.com/cttd/project-resurfy#README"
+}
