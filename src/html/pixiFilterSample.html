@@ -2,12 +2,12 @@
 <html>
 <head>
 	<title>pixijs start</title>
-	<link rel="stylesheet" href="/assets/vendor/jquery-ui.min.css">
-	<script type="text/javascript" src="/assets/vendor/jquery-3.2.0.min.js"></script>
-	<script type="text/javascript" src="/assets/vendor/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="/assets/vendor/pixi.min.js"></script>
-	<script type="text/javascript" src="/assets/js/stage.js"></script>
-	<script type="text/javascript" src="/assets/js/util.js"></script>
+	<link rel="stylesheet" href="../assets/vendor/jquery-ui.min.css">
+	<script type="text/javascript" src="../assets/vendor/jquery-3.2.0.min.js"></script>
+	<script type="text/javascript" src="../assets/vendor/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="../assets/vendor/pixi.min.js"></script>
+	<script type="text/javascript" src="../assets/js/stage.js"></script>
+	<script type="text/javascript" src="../assets/js/util.js"></script>
 
 	<style type="text/css">
 		*{
@@ -133,12 +133,12 @@
 
 
 	var stage = new PIXI.Container(); // `stage` 라는 컨테이너 객체를 생성.
-	var mainTexture = PIXI.Texture.fromImage('/assets/images/img1.jpg'); // 주 사용 이미지
-	var displacementTexture = PIXI.Sprite.fromImage('/assets/images/displacementmap.png'); // DisplacementFilter 용 이미지.
+	var mainTexture = PIXI.Texture.fromImage('../assets/images/img1.jpg'); // 주 사용 이미지
+	var displacementTexture = PIXI.Sprite.fromImage('../assets/images/displacementmap.png'); // DisplacementFilter 용 이미지.
 	displacementTexture.width = windowStatus.width;
 	displacementTexture.height = windowStatus.height;
 
-	var noiseTexture = PIXI.Sprite.fromImage('/assets/images/pattern_360.png'); // noiseMap 용 이미지.
+	var noiseTexture = PIXI.Sprite.fromImage('../assets/images/pattern_360.png'); // noiseMap 용 이미지.
 	noiseTexture.width = windowStatus.width;
 	noiseTexture.height = windowStatus.height;
 
